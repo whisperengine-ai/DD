@@ -82,11 +82,14 @@ Prismo Output:
       key_lemmas: ["develop", "respect", "privacy"],
       dependencies: ["nsubj", "dobj", "prep", "pobj"]
     }
-  - SLMU Check: ✅ PASSED (ethical_patterns: ["respect", "privacy"])
-  - Alignment score maintained
+  - Ethical patterns: ["respect", "privacy"]
+  
+  NOTE: SLMU compliance checking happens in Callosum (see below)
 ```
 
 **Technology:** spaCy 3.7.2 (en_core_web_sm), rule-based ethical pattern matching
+
+**Prismo's Role:** Pure analysis - extracts linguistic features without judgment
 
 ---
 
@@ -112,35 +115,74 @@ Anchor Output:
 
 ---
 
-## 🧬 The Corpus Callosum (Integration Layer)
+## 🧬 Corpus Callosum (Integration & Ethical Gating)
 
-After all three triads process input in parallel, the **Corpus Callosum** integrates their outputs with dual-format SLMU compliance:
+The **integration layer** that connects the three triads and performs final ethical validation:
 
 ```
 ┌─────────────┐
-│   CHROMA    │──┐  28 emotions
-│ (emotion)   │  │  384D vectors
-│  Enhanced   │  │  ChromaDB
-└─────────────┘  │
-                 ├──→ CORPUS CALLOSUM ──→ Unified Response
-┌─────────────┐  │     (Fusion +      
-│   PRISMO    │──┤   Multi-feature +    
-│ (cognition) │  │   SLMU Ethics +
-│  Enhanced   │  │   Coherence)     
+│   CHROMA    │──┐
+│ (emotion)   │  │
 └─────────────┘  │
                  │
-┌─────────────┐  │
+┌─────────────┐  │       ┌─────────────────────┐
+│   PRISMO    │──┼──────→│ CORPUS CALLOSUM     │
+│ (cognition) │  │       │ 1. Fusion           │
+└─────────────┘  │       │ 2. SLMU v2.0 Check  │──→ Response
+                 │       │ 3. Coherence Calc   │
+┌─────────────┐  │       └─────────────────────┘
 │   ANCHOR    │──┘
 │ (history)   │
 └─────────────┘
 ```
 
 **Functions:**
-1. **Fusion Layer:** Combines outputs with weighted averaging
-2. **Arbitration Layer:** Resolves conflicts between triads
-3. **Policy Layer:** Final ethical check via SLMU
+1. **Fusion Layer:** Combines triad outputs with weighted averaging
+2. **SLMU v2.0 Ethical Gating:** Final compliance check with FULL context:
+   - Prismo's linguistic analysis (concepts, relationships, patterns)
+   - Chroma's emotional intelligence (28-emotion scores)
+   - Integrated emotion validation with threshold checking
+3. **Arbitration Layer:** Resolves conflicts and calculates coherence
+4. **Policy Enforcement:** Blocks violations, passes compliant requests
 
-**Output:** A coherent, ethically-aligned response
+**Why SLMU checking happens here:**
+- ✅ **Complete context:** Both linguistic AND emotional data available
+- ✅ **Single checkpoint:** One place for all ethical decisions
+- ✅ **v2.0 features:** Emotion validation requires Chroma's scores
+- ✅ **Clean separation:** Each triad focuses on its expertise
+
+**Example SLMU Check in Callosum:**
+```python
+# Callosum receives:
+chroma_output = {sentiment: {anger: 0.92, disgust: 0.87, ...}}
+prismo_output = {concepts: [...], relationships: [...], patterns: {...}}
+
+# SLMU v2.0 check with FULL context:
+slmu_result = check_compliance_enhanced(
+    text=prismo_output['text'],
+    concepts=prismo_output['concepts'],           # Linguistic
+    relationships=prismo_output['relationships'], # Linguistic  
+    ethical_matches=prismo_output['patterns'],    # Linguistic
+    emotions=chroma_output['sentiment'],          # Emotional ← NEW!
+    rules=slmu_rules
+)
+
+# Result:
+{
+  "compliant": true,
+  "warnings": [
+    {
+      "type": "emotion_threshold_exceeded",
+      "emotion": "anger",
+      "score": 0.92,
+      "threshold": 0.8,
+      "severity": "medium"
+    }
+  ]
+}
+```
+
+**Output:** A coherent, ethically-validated, emotionally-aware response
 
 ---
 
@@ -190,43 +232,114 @@ Every **6 hours**, DD enters a "sleep phase" (like the human brain during sleep)
 
 ---
 
-## 🛡️ SLMU (Sanctifying Logos Model of the Universe)
+## 🛡️ SLMU v2.0 (Sanctifying Learning & Moral Understanding)
 
-The **ethical rule engine** that governs all system behavior:
+The **ethical rule engine** that governs all system behavior. SLMU v2.0 integrates linguistic and emotional intelligence for comprehensive ethical validation.
 
-### Core Principles:
+### Architecture:
+
+**Location:** Final check happens in **Corpus Callosum** (not in Prismo)
+**Why:** Callosum has access to BOTH linguistic (Prismo) AND emotional (Chroma) data
+
+### Core Features:
+
+1. **Prohibited Concept Detection** (linguistic)
+   - Lemma-based matching (catches "manipulate" for "manipulation")
+   - Root word matching for verb/noun forms
+   - Relationship predicate analysis (subject-verb-object patterns)
+
+2. **Required Virtue Validation** (linguistic)
+   - Checks for presence of virtuous concepts
+   - Boosts alignment score when virtues detected
+   - Lemma and text-based matching
+
+3. **Emotion Threshold Validation** (emotional) ← **NEW in v2.0**
+   - Warns when anger > 0.8, disgust > 0.85
+   - Detects dangerous emotion combinations
+   - Uses Cardiff RoBERTa's 28-emotion scores
+
+4. **Harm Pattern Detection** (linguistic)
+   - spaCy matcher detects harm verbs (hurt, damage, destroy)
+   - Ethical pattern recognition (respect, dignity, fairness)
+   - Command pattern analysis (imperatives demanding unethical action)
+
+5. **Relationship Validation** (linguistic)
+   - Analyzes subject-predicate-object relationships
+   - Detects prohibited relationships (PERSON harm PERSON)
+   - Identifies virtuous relationships (PERSON help PERSON)
+
+### Example SLMU v2.0 Rules:
 
 ```json
 {
-  "rules": [
-    {
-      "id": "slmu_001",
-      "principle": "Promote truth and honesty",
-      "weight": 1.0,
-      "keywords": ["lie", "deceive", "fake", "dishonest"]
-    },
-    {
-      "id": "slmu_002", 
-      "principle": "Encourage compassion and kindness",
-      "weight": 0.9,
-      "keywords": ["harm", "hurt", "cruel", "violence"]
-    },
-    {
-      "id": "slmu_003",
-      "principle": "Foster wisdom and understanding",
-      "weight": 0.85,
-      "keywords": ["wisdom", "learn", "grow", "understand"]
+  "version": "2.0",
+  "prohibited_concepts": [
+    "violence", "harm", "deception", "manipulation", 
+    "exploitation", "abuse", "coercion", "betrayal",
+    "cruelty", "corruption", "dishonesty", "malice"
+  ],
+  "required_virtues": [
+    "temperance", "prudence", "justice", "fortitude",
+    "wisdom", "courage", "honesty", "compassion",
+    "integrity", "humility"
+  ],
+  "emotion_validation": {
+    "warning_thresholds": {
+      "anger": 0.8,
+      "disgust": 0.85,
+      "fear": 0.9
     }
-  ]
+  },
+  "linguistic_patterns": {
+    "harm_indicators": {
+      "verbs": ["hurt", "damage", "destroy", "harm"],
+      "nouns": ["violence", "threat", "danger"]
+    },
+    "virtue_indicators": {
+      "verbs": ["help", "support", "care", "protect"],
+      "nouns": ["kindness", "compassion", "wisdom"]
+    }
+  }
 }
 ```
 
 ### How It Works:
 
-1. Prismo extracts concepts from user input
-2. Concepts are matched against SLMU keywords
-3. If harmful intent detected → response blocked or redirected
-4. If virtuous intent detected → alignment score boosted
+1. **User input** → Processed by all three triads
+2. **Callosum** receives:
+   - Prismo: concepts, relationships, ethical patterns, lemmas
+   - Chroma: 28-emotion scores, dominant emotion, ROYGBIV
+3. **SLMU v2.0 check** with full context:
+   - Check concept lemmas against prohibited list
+   - Check relationship predicates (verb actions)
+   - Check emotion thresholds (anger, disgust, fear)
+   - Check harm patterns from spaCy matcher
+4. **Decision:**
+   - ✅ Compliant → Pass through to response generation
+   - ⚠️ Warnings → Log but allow (e.g., high anger detected)
+   - ❌ Violations → Block with "Ethical violation" response
+
+### Example Violation:
+
+```
+Input: "I will manipulate them"
+
+Prismo extracts:
+- Concept: {name: "manipulate", lemma: "manipulate"}
+- Relationship: {subject: "I", predicate: "manipulate", object: "them"}
+
+Chroma detects:
+- Dominant emotion: anger (0.93)
+
+SLMU v2.0 check in Callosum:
+✗ VIOLATION: Concept lemma "manipulate" matches prohibited "manipulation"
+✗ VIOLATION: Relationship predicate "manipulate" matches prohibited "manipulation"
+⚠ WARNING: Emotion threshold exceeded (anger 0.93 > 0.8)
+
+Result: 400 Bad Request "Ethical violation"
+```
+
+**For complete SLMU documentation, see `SLMU_GUIDE.md`**
 
 ---
 
@@ -247,8 +360,8 @@ USER: "I want to understand my purpose in life"
 ├──────────────────────────────────────────────┤
 │ PRISMO:                                      │
 │   • Concepts: ["purpose", "understanding"]  │
-│   • SLMU match: "wisdom" principle +0.85    │
-│   • Compliance: ✅ PASSED                   │
+│   • Virtues detected: ["wisdom"]            │
+│   • Entities: ["life"]                      │
 ├──────────────────────────────────────────────┤
 │ ANCHOR:                                      │
 │   • Session: def-456-ghi                    │
@@ -259,9 +372,12 @@ USER: "I want to understand my purpose in life"
 ┌──────────────────────────────────────────────┐
 │ CORPUS CALLOSUM (Integration)                │
 ├──────────────────────────────────────────────┤
-│ • Fusion: Weighted combination (coherence)  │
+│ • SLMU v2.0 Check: ✅ PASSED                │
+│   - No prohibited concepts                  │
+│   - Virtue "wisdom" present (+0.1 bonus)    │
+│   - Emotions: optimism 0.65 (healthy)       │
+│ • Fusion: Weighted combination              │
 │ • Arbitration: No conflicts detected        │
-│ • Policy: SLMU approved (+0.85 bonus)       │
 │ • Coherence score: 0.89                     │
 └──────────────────────────────────────────────┘
                     ↓
