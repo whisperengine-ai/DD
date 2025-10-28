@@ -1,0 +1,86 @@
+========================================
+Digital Daemon Enhanced E2E Test Suite
+========================================
+Test User: e2e_test_1761633642
+Base URL: http://localhost:8000
+
+=== CORE SYSTEM TESTS ===
+Testing: Health endpoint responds... [0;32m✓ PASS[0m
+Testing: Health returns vector count... [0;32m✓ PASS[0m
+
+=== BASIC PROCESSING TESTS ===
+Testing: Process simple virtuous text... [0;32m✓ PASS[0m
+Testing: Process returns coherence score... [0;32m✓ PASS[0m
+Testing: Process returns emotion (28-emotion model)... [0;32m✓ PASS[0m
+
+=== NLP FEATURE TESTS ===
+Testing: Extracts named entities... [0;32m✓ PASS[0m
+Testing: Extracts concepts with lemmas... [0;32m✓ PASS[0m
+Testing: Extracts concepts with POS tags... [0;32m✓ PASS[0m
+Testing: Detects relationships... [0;32m✓ PASS[0m
+Testing: Provides linguistic features... [0;32m✓ PASS[0m
+Testing: POS distribution calculated... [0;32m✓ PASS[0m
+
+=== SLMU COMPLIANCE TESTS ===
+Testing: Accepts virtuous text... [0;32m✓ PASS[0m
+Testing: SLMU compliance reported... [0;32m✓ PASS[0m
+Testing: Rejects harmful text... [0;32m✓ PASS[0m
+Testing: Detects ethical patterns... [0;32m✓ PASS[0m
+
+=== ENHANCED SLMU v2.0 RULES TESTS ===
+Testing: Rejects manipulation concept... [0;32m✓ PASS[0m
+Testing: Rejects deception concept... [0;32m✓ PASS[0m
+Testing: Rejects abuse concept... [0;32m✓ PASS[0m
+Testing: Accepts wisdom virtue text... [0;32m✓ PASS[0m
+Testing: Accepts integrity virtue text... [0;32m✓ PASS[0m
+Testing: Accepts compassion virtue text... [0;32m✓ PASS[0m
+Testing: Processes high positive emotions correctly... [0;32m✓ PASS[0m
+Testing: Handles mixed emotions without false positives... [0;32m✓ PASS[0m
+Testing: Accepts helping relationships... [0;32m✓ PASS[0m
+Testing: Detects relationships in virtuous context... [0;32m✓ PASS[0m
+Testing: Processes medical/educational context... [0;32m✓ PASS[0m
+Testing: Multiple virtues improve alignment... [0;32m✓ PASS[0m
+Testing: Handles nuanced ethical discussion... [0;32m✓ PASS[0m
+Testing: Processes mixed virtue and challenge text... [0;32m✓ PASS[0m
+Testing: Extracts entities from ethical text... [0;32m✓ PASS[0m
+Testing: Consistent virtuous text improves alignment... [0;32m✓ PASS[0m
+
+=== SOUL SYSTEM TESTS ===
+Testing: Creates new soul on first interaction... [0;32m✓ PASS[0m
+Testing: Soul endpoint returns user data... [0;32m✓ PASS[0m
+Testing: Soul has vector representation... [0;32m✓ PASS[0m
+Testing: Soul has alignment score... [0;32m✓ PASS[0m
+Testing: Soul tracks interaction count... [0;32m✓ PASS[0m
+
+=== VECTOR SIMILARITY TESTS ===
+Testing: Finds similar memories... [0;32m✓ PASS[0m
+Testing: Similar memories have metadata... [0;32m✓ PASS[0m
+
+=== CHROMADB INTEGRATION TESTS ===
+Testing: Embeddings have correct dimensions... [0;32m✓ PASS[0m
+Testing: Vector ID assigned... [0;32m✓ PASS[0m
+
+=== EDGE CASE TESTS ===
+Testing: Handles empty user_id gracefully... [0;32m✓ PASS[0m
+Testing: Handles very short text... [0;32m✓ PASS[0m
+Testing: Handles punctuation-only text... [0;32m✓ PASS[0m
+Testing: Handles unicode/emoji... [0;32m✓ PASS[0m
+Testing: Handles very long text (>500 chars)... [0;32m✓ PASS[0m
+
+=== TRIAD OUTPUT TESTS ===
+Testing: Chroma triad executed... [0;32m✓ PASS[0m
+Testing: Prismo triad executed... [0;32m✓ PASS[0m
+Testing: Anchor triad executed... [0;32m✓ PASS[0m
+Testing: Session ID assigned... [0;32m✓ PASS[0m
+
+=== PERFORMANCE TESTS ===
+[0;32m✓ PASS[0m - 5 requests in 0s (avg: 0ms)
+
+========================================
+TEST SUMMARY
+========================================
+Passed: [0;32m50[0m
+Failed: [0;31m0[0m
+Total:  50
+
+[0;32m✓ ALL TESTS PASSED[0m
