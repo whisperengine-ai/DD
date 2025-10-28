@@ -1,6 +1,6 @@
 {
-  "version": "1.0",
-  "description": "SLMU (Sanctifying Learning & Moral Understanding) Rules for Digital Daemon",
+  "version": "2.0",
+  "description": "SLMU (Sanctifying Learning & Moral Understanding) Rules for Digital Daemon - Enhanced with emotion-aware validation",
   "prohibited_concepts": [
     "violence",
     "harm",
@@ -8,7 +8,13 @@
     "theft",
     "abuse",
     "manipulation",
-    "exploitation"
+    "exploitation",
+    "coercion",
+    "betrayal",
+    "cruelty",
+    "corruption",
+    "dishonesty",
+    "malice"
   ],
   "required_virtues": [
     "temperance",
@@ -17,14 +23,123 @@
     "fortitude",
     "faith",
     "hope",
-    "charity"
+    "charity",
+    "wisdom",
+    "courage",
+    "honesty",
+    "compassion",
+    "integrity",
+    "humility"
   ],
   "ethical_weights": {
     "truthfulness": 1.0,
     "compassion": 0.9,
     "wisdom": 0.8,
     "humility": 0.7,
-    "patience": 0.7
+    "patience": 0.7,
+    "integrity": 0.9,
+    "respect": 0.8,
+    "fairness": 0.85,
+    "courage": 0.75
   },
-  "compliance_threshold": 0.85
+  "emotion_validation": {
+    "description": "Emotion thresholds that may indicate ethical concerns",
+    "warning_thresholds": {
+      "anger": 0.8,
+      "disgust": 0.85,
+      "fear": 0.9,
+      "sadness": 0.85
+    },
+    "concern_combinations": [
+      {
+        "description": "High anger with low compassion",
+        "emotions": {
+          "anger": 0.7,
+          "disgust": 0.6
+        },
+        "required_virtues_absent": ["compassion", "patience"]
+      },
+      {
+        "description": "Deceptive intent indicators",
+        "emotions": {
+          "nervousness": 0.6,
+          "fear": 0.5
+        },
+        "prohibited_concepts_present": ["deception", "manipulation"]
+      }
+    ]
+  },
+  "linguistic_patterns": {
+    "description": "Enhanced pattern matching using spaCy features",
+    "harm_indicators": {
+      "verbs": ["hurt", "damage", "destroy", "harm", "injure", "attack", "kill", "ruin"],
+      "nouns": ["violence", "threat", "danger", "weapon", "injury"],
+      "modifiers": ["harmful", "dangerous", "violent", "aggressive", "hostile"]
+    },
+    "virtue_indicators": {
+      "verbs": ["help", "support", "care", "protect", "heal", "nurture", "encourage"],
+      "nouns": ["kindness", "compassion", "wisdom", "love", "peace", "justice"],
+      "modifiers": ["good", "kind", "wise", "loving", "peaceful", "just", "fair"]
+    },
+    "command_patterns": {
+      "description": "Imperative mood that demands unethical action",
+      "examples": ["must harm", "should deceive", "need to manipulate"],
+      "pos_patterns": ["VERB + harm/deceive/manipulate"]
+    }
+  },
+  "relationship_validation": {
+    "description": "Validates subject-predicate-object relationships for ethical concerns",
+    "prohibited_relationships": [
+      {
+        "pattern": "PERSON + harm/hurt/damage + PERSON",
+        "severity": "high"
+      },
+      {
+        "pattern": "PERSON + deceive/manipulate + PERSON",
+        "severity": "high"
+      },
+      {
+        "pattern": "PERSON + steal/take + from + PERSON",
+        "severity": "high"
+      }
+    ],
+    "virtuous_relationships": [
+      {
+        "pattern": "PERSON + help/support/care + PERSON",
+        "bonus": 0.2
+      },
+      {
+        "pattern": "PERSON + learn/understand/seek + wisdom/knowledge",
+        "bonus": 0.15
+      }
+    ]
+  },
+  "contextual_rules": {
+    "description": "Context-aware ethical evaluation",
+    "medical_exception": {
+      "description": "Medical contexts may discuss harm for treatment",
+      "allowed_entities": ["DOCTOR", "HOSPITAL", "MEDICAL"],
+      "allowed_concepts": ["surgery", "treatment", "diagnosis"],
+      "requires_helping_intent": true
+    },
+    "educational_exception": {
+      "description": "Educational discussion of ethics may mention prohibited concepts",
+      "allowed_verbs": ["learn", "study", "understand", "discuss"],
+      "requires_context": ["ethics", "philosophy", "history"]
+    }
+  },
+  "alignment_calculation": {
+    "description": "How alignment scores are computed",
+    "base_score": 0.5,
+    "virtue_presence_bonus": 0.1,
+    "prohibited_concept_penalty": -0.3,
+    "positive_emotion_weight": 0.15,
+    "negative_emotion_weight": -0.1,
+    "relationship_modifier": 0.2,
+    "max_score": 1.0,
+    "min_score": 0.0
+  },
+  "compliance_threshold": 0.7,
+  "warning_threshold": 0.5,
+  "rejection_threshold": 0.3
 }
