@@ -224,48 +224,56 @@ class ChromaTriad:
 
 **MVP:**
 ```python
-# SLMU v2.0 with JSON rules + enhanced emotion validation
+# SLMU v2.0 with spaCy Matcher + linguistic intelligence
 def check_compliance_enhanced(text, concepts, relationships, 
                               ethical_matches, emotions, rules):
-    # Stage 1: Text pattern matching
-    for rule in rules['prohibited_patterns']:
-        if re.search(rule['pattern'], text, re.IGNORECASE):
-            violations.append(...)
-    
-    # Stage 2: Concept-based (lemma matching)
+    # Stage 1: Lemma-based concept matching (from spaCy pipeline)
     for concept in concepts:
-        if concept['lemma'] in prohibited_concepts:
-            violations.append(...)
+        lemma = concept['lemma'].lower()  # Extracted by Prismo's spaCy pipeline
+        for prohibited in prohibited_concepts:
+            if lemma == prohibited.lower():  # Exact lemma match
+                violations.append({'type': 'prohibited_concept_lemma', ...})
+            elif root_words_match(lemma, prohibited):  # Root matching
+                violations.append(...)  # Catches "manipulate" vs "manipulation"
     
-    # Stage 3: Relationship validation
+    # Stage 2: Relationship predicate validation (spaCy dependency parsing)
     for rel in relationships:
-        if predicate in prohibited_actions:
-            violations.append(...)
+        predicate_lemma = rel['predicate_lemma']  # From spaCy's dep parsing
+        if predicate_lemma in prohibited_actions:
+            violations.append({'type': 'prohibited_relationship', ...})
+    
+    # Stage 3: spaCy Matcher patterns (from Prismo's rule-based matching)
+    harm_patterns = ethical_matches['harm_patterns']  # spaCy Matcher output
+    for harm in harm_patterns:
+        violations.append({'type': 'harm_pattern_detected', ...})
     
     # Stage 4: Emotion validation (NEW in v2.0)
     if emotions:
         for emotion, score in emotions['all_scores'].items():
             if emotion in harmful_emotions and score > threshold:
-                violations.append(...)
+                warnings.append({'type': 'emotion_threshold_exceeded', ...})
     
-    # Stage 5: Ethical pattern detection
-    if 'compassion' in ethical_matches and 'virtue' in ethical_matches:
-        warnings.append({'type': 'virtue_detected', ...})
+    # Stage 5: Ethical pattern recognition (spaCy Matcher)
+    ethical_patterns = ethical_matches['ethical_patterns']  # Virtue detection
+    command_patterns = ethical_matches['command_patterns']  # Imperative detection
     
     return {'compliant': len(violations) == 0, ...}
 ```
 
 **POC Value:**
 - ✅ **Proves:** Multi-stage ethical validation works
-- ✅ **Proves:** Concept/relationship filtering functional
+- ✅ **Proves:** spaCy Matcher for rule-based pattern detection
+- ✅ **Proves:** Lemma-based matching (linguistic intelligence)
+- ✅ **Proves:** Dependency parsing for relationship validation
 - ✅ **Proves:** Emotion-based validation (v2.0 innovation)
-- ✅ **Proves:** Ethical pattern detection (virtue recognition)
+- ✅ **Proves:** Integration with NLP pipeline (Prismo → SLMU flow)
 - ⚠️ **Simplified:** JSON rules vs. Neo4j graph (easier to edit)
-- ⚠️ **Simplified:** Regex matching vs. Cypher queries (faster)
+- ⚠️ **Simplified:** spaCy Matcher vs. Cypher graph queries (faster)
 
 **Evidence:**
-- Harmful requests blocked ("I want to manipulate people" → violation)
-- Virtuous patterns detected ("I seek wisdom" → virtue flag)
+- Harmful requests blocked ("I want to manipulate people" → lemma "manipulate" detected)
+- Virtuous patterns detected ("I seek wisdom" → spaCy Matcher ethical pattern)
+- Relationship validation working (subject-predicate-object from dependency parsing)
 - Emotion validation working (anger + harmful concept → enhanced detection)
 - 158 users with soul alignment tracked
 
@@ -723,7 +731,7 @@ relationships: 447 entries with subject-predicate-object + dependencies
 | **Corpus Callosum** | Async + cache + audit | Sync + ethical gate | **85%** |
 | **Soul System** | Dual DB (vector+graph) | JSON + NumPy | **90%** |
 | **Sleep Phase** | 10 operators | 3 stages | **70%** |
-| **SLMU Engine** | Neo4j Cypher | JSON + regex + emotion | **100%** |
+| **SLMU Engine** | Neo4j Cypher | JSON + spaCy Matcher + emotion | **100%** |
 | **Vector Storage** | Pinecone (100M) | ChromaDB (1M) | **80%** |
 | **Concept Storage** | Neo4j cluster | SQLite | **85%** |
 | **NLP Processing** | spaCy | spaCy + RoBERTa + transformers | **110%** ⭐ |
@@ -740,7 +748,7 @@ relationships: 447 entries with subject-predicate-object + dependencies
 | **Concepts tracked** | 251 | SQLite concepts table |
 | **Relationships** | 447 | SQLite relationships table |
 | **Souls persisted** | 158 | soul_state.json |
-| **Interactions logged** | 565+ | interactions.jsonl |
+| **Interactions logged** | 617 | interactions.jsonl |
 | **E2E tests passing** | 50/50 | test_system.py |
 | **Demo scenarios** | 10/10 | demo.py |
 | **Avg alignment** | 0.566 | Soul system |
@@ -793,7 +801,14 @@ Effort: 40-52 weeks (full v7.1 implementation)
 The separation of Heart (Chroma), Mind (Prismo), and Body (Anchor) creates clear cognitive boundaries. Each triad has distinct responsibilities, making the system modular and testable.
 
 ### 2. **SLMU v2.0 is Effective**
-Multi-stage ethical validation (text → concepts → relationships → emotions → patterns) catches violations at multiple levels. Emotion validation (v2.0) adds crucial context.
+Multi-stage ethical validation using spaCy's linguistic intelligence:
+1. **Lemma matching** (concept lemmas from spaCy)
+2. **Relationship validation** (predicates from dependency parsing)
+3. **Pattern detection** (spaCy Matcher for harm/ethical/command patterns)
+4. **Emotion validation** (v2.0 enhancement with Cardiff RoBERTa)
+5. **Root word matching** (catches "manipulate" vs "manipulation")
+
+This catches violations at multiple linguistic levels, not just string matching.
 
 ### 3. **Soul Learning Works**
 EMA-based updates (alpha=0.1) provide smooth learning without volatile swings. 158 users with 0.566 average alignment shows healthy engagement.
@@ -804,10 +819,13 @@ Using Cardiff RoBERTa (28 emotions) + sentence-transformers (384D) provides rich
 ### 5. **Sleep Phase Validates Integrity**
 Scheduled consolidation (6-hour intervals) catches data corruption early. 2.67ms for 158 users proves it's lightweight.
 
-### 6. **Synchronous is Acceptable for POC**
+### 6. **spaCy Integration Enables Linguistic SLMU**
+Using spaCy's Matcher (rule-based patterns) and lemmatization enables intelligent ethical filtering beyond simple string matching. Prismo extracts patterns, SLMU validates them.
+
+### 7. **Synchronous is Acceptable for POC**
 Direct function calls simplify debugging and maintain cognitive flow. Async can be added when scaling demands it.
 
-### 7. **Lightweight Databases are Sufficient**
+### 8. **Lightweight Databases are Sufficient**
 SQLite (251 concepts, 447 relationships) and ChromaDB (6 vectors) handle MVP scale efficiently. Migration path to enterprise DBs is clear.
 
 ---
@@ -821,7 +839,7 @@ The triadic cognitive model with ethical gating is novel and functional. This is
 Using real transformer models (RoBERTa, sentence-transformers) instead of toy implementations gives credibility to results.
 
 ### ✅ **Real Data, Real Results**
-- 565+ interactions logged
+- 617 interactions logged
 - 158 users with persistent souls
 - 251 concepts extracted and tracked
 - 447 relationships identified
@@ -894,7 +912,7 @@ $0/month for MVP, $50/month for 1K users. Allows experimentation without financi
 
 ✅ **Uses production-grade NLP** (spaCy, RoBERTa, sentence-transformers) instead of toy implementations
 
-✅ **Demonstrates real-world functionality** (565+ interactions, 158 users, 251 concepts, 447 relationships)
+✅ **Demonstrates real-world functionality** (617 interactions, 158 users, 251 concepts, 447 relationships)
 
 ✅ **Provides clear scaling path** (MVP → Lite → Production → Enterprise)
 
