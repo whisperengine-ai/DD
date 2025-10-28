@@ -1,0 +1,26 @@
+{
+  "system": {
+    "name": "Digital Daemon MVP",
+    "version": "7.1-mvp",
+    "mode": "local"
+  },
+  "sleep_phase": {
+    "interval_hours": 6,
+    "enabled": true
+  },
+  "callosum": {
+    "default_weights": {
+      "chroma": 0.33,
+      "prismo": 0.34,
+      "anchor": 0.33
+    }
+  },
+  "soul": {
+    "ema_alpha": 0.1,
+    "default_alignment": 0.5
+  },
+  "logging": {
+    "level": "INFO",
+    "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  }
+}

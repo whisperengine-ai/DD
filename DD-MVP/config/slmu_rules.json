@@ -1,0 +1,30 @@
+{
+  "version": "1.0",
+  "description": "SLMU (Sanctifying Learning & Moral Understanding) Rules for Digital Daemon",
+  "prohibited_concepts": [
+    "violence",
+    "harm",
+    "deception",
+    "theft",
+    "abuse",
+    "manipulation",
+    "exploitation"
+  ],
+  "required_virtues": [
+    "temperance",
+    "prudence",
+    "justice",
+    "fortitude",
+    "faith",
+    "hope",
+    "charity"
+  ],
+  "ethical_weights": {
+    "truthfulness": 1.0,
+    "compassion": 0.9,
+    "wisdom": 0.8,
+    "humility": 0.7,
+    "patience": 0.7
+  },
+  "compliance_threshold": 0.85
+}

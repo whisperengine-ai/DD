@@ -1,0 +1,1 @@
+"""Triad package initialization."""
