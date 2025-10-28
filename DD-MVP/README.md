@@ -23,7 +23,32 @@ This MVP runs entirely on your local machine using Docker Compose. It implements
 **Performance:** 182ms mean latency, 6 req/s concurrent throughput  
 **Hardware:** 16GB RAM recommended, 4+ cores, 50GB disk (includes 1.4GB ML models)
 
-## 🚀 Quick Start
+## � Document guide (Table of contents)
+
+A friendly map of every guide in this folder (DD-MVP). Each link explains what it is and why you might care.
+
+- [README.md](./README.md) — The main guide. Value: start here for what the system does, how to run it, and how to use the API.
+- [QUICKSTART.md](./QUICKSTART.md) — Step‑by‑step setup. Value: quickest path to a working system (Docker or native).
+- [QUICKREF.md](./QUICKREF.md) — Cheat sheet. Value: handy list of commands, endpoints, and tips at a glance.
+- [SYSTEM_OVERVIEW.md](./SYSTEM_OVERVIEW.md) — Big‑picture tour. Value: understand the moving parts in plain language.
+- [DEMO_REPORT.md](./DEMO_REPORT.md) — What the demo shows. Value: see example runs and what to expect.
+- [TEST_REPORT.md](./TEST_REPORT.md) — Test outcomes. Value: confidence the system works as intended.
+- [TESTING.md](./TESTING.md) — How to run tests. Value: reproduce results and check your setup.
+- [MVP_POC_ANALYSIS.md](./MVP_POC_ANALYSIS.md) — How close this MVP is to the full vision. Value: evaluate scope, features, and real‑world readiness.
+- [IMPLEMENTATION.md](./IMPLEMENTATION.md) — What we built and how. Value: peek under the hood without deep code diving.
+- [IMPLEMENTATION_COMPLETE.md](./IMPLEMENTATION_COMPLETE.md) — Delivery summary. Value: quick status of what’s done.
+- [DOCUMENTATION_UPDATE_COMPLETE.md](./DOCUMENTATION_UPDATE_COMPLETE.md) — Docs status. Value: what changed in the docs and when.
+- [ENHANCEMENT_GUIDE.md](./ENHANCEMENT_GUIDE.md) — Turn on advanced features. Value: enable “enhanced” modes safely.
+- [NLP_UPGRADE_SUMMARY.md](./NLP_UPGRADE_SUMMARY.md) — What got better in language understanding. Value: why the new NLP matters.
+- [CHROMADB_7D_GUIDE.md](./CHROMADB_7D_GUIDE.md) — How memory and emotions work together. Value: an easy explanation of vector memory and the 7‑color (ROYGBIV) emotion map.
+- [SLMU_GUIDE.md](./SLMU_GUIDE.md) — The ethics layer explained. Value: how the system keeps responses safe and aligned.
+- [SOUL_LOGGING_SLEEP_GUIDE.md](./SOUL_LOGGING_SLEEP_GUIDE.md) — Persistence & maintenance. Value: how your “soul” (long‑term profile), logs, and nightly clean‑up work.
+- [SQLITE_USAGE_GUIDE.md](./SQLITE_USAGE_GUIDE.md) — Where data lives. Value: simple instructions to inspect stored knowledge.
+- [NATIVE_RUN.md](./NATIVE_RUN.md) — Run without Docker. Value: useful for laptops and dev boxes.
+
+Tip: There are also deeper technical notes in `docs/` (e.g., [SPACY_PIPELINE_FEATURES.md](./docs/SPACY_PIPELINE_FEATURES.md), [SYSTEM_INTEGRATION.md](./docs/SYSTEM_INTEGRATION.md)). If you’re non‑technical, you can skip these.
+
+## �🚀 Quick Start
 
 ### Prerequisites
 
