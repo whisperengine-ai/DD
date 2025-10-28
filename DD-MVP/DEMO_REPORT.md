@@ -1,3 +1,7 @@
+
+---
+
+Original architecture/design credit: TechnoShaman (Discord ID: 191470268999401472)
 # Enhanced Demo Report
 **Digital Daemon MVP - Architecture & SLMU v2.0 Demonstration**
 

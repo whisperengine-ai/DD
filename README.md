@@ -1,3 +1,7 @@
+
+---
+
+Original architecture/design credit: TechnoShaman (Discord ID: 191470268999401472)
 # DD — Digital Daemon Repository (v7.1)
 
 A monorepo that currently hosts the Digital Daemon Enhanced MVP (DD‑MVP). It implements a triadic cognitive architecture (Chroma, Prismo, Anchor) with fusion via a Corpus Callosum, persistent "Soul" alignment, ChromaDB vector memory, and a spaCy‑driven SLMU ethics layer.

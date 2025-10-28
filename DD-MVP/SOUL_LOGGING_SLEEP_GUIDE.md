@@ -1,3 +1,7 @@
+
+---
+
+Original architecture/design credit: TechnoShaman (Discord ID: 191470268999401472)
 # Soul, Logging & Sleep Phase - Feature Guide
 **Digital Daemon MVP - Persistence & Maintenance Systems**
 

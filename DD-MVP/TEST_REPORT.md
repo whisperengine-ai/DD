@@ -1,3 +1,7 @@
+
+---
+
+Original architecture/design credit: TechnoShaman (Discord ID: 191470268999401472)
 # E2E Test Suite Report
 **Digital Daemon MVP - End-to-End Test Results**
 

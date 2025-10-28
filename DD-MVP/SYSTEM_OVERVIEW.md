@@ -1,3 +1,7 @@
+
+---
+
+Original architecture/design credit: TechnoShaman (Discord ID: 191470268999401472)
 # Digital Daemon v7.1 — System Overview (Enhanced)
 
 **A Cognitively-Inspired AI Architecture with 28-Emotion Detection, Advanced NLP, and Ethical Alignment**

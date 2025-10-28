@@ -1,3 +1,7 @@
+
+---
+
+Original architecture/design credit: TechnoShaman (Discord ID: 191470268999401472)
 # ChromaDB & 7D ROYGBIV Vector Guide
 **Digital Daemon v7.1 - Emotional Vector Storage**
 

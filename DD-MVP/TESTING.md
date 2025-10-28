@@ -1,3 +1,7 @@
+
+---
+
+Original architecture/design credit: TechnoShaman (Discord ID: 191470268999401472)
 # Testing & Demo Guide
 
 Comprehensive testing and demonstration scripts for the Digital Daemon MVP.

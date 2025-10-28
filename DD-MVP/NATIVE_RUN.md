@@ -1,3 +1,7 @@
+
+---
+
+Original architecture/design credit: TechnoShaman (Discord ID: 191470268999401472)
 # Running Digital Daemon MVP Natively (Without Docker)
 
 ## Quick Start

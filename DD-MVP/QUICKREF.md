@@ -1,3 +1,7 @@
+
+---
+
+Original architecture/design credit: TechnoShaman (Discord ID: 191470268999401472)
 # Digital Daemon Enhanced MVP - Quick Reference
 
 ## 🚀 Getting Started

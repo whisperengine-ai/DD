@@ -1,3 +1,7 @@
+
+---
+
+Original architecture/design credit: TechnoShaman (Discord ID: 191470268999401472)
 # **Digital Daemon v7.1 — Validated Architecture & Implementation Plan**
 *Comprehensive Engineering Reference with Corrections, Roadmap, and Timeline*
 

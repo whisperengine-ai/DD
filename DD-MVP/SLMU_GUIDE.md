@@ -1,3 +1,7 @@
+
+---
+
+Original architecture/design credit: TechnoShaman (Discord ID: 191470268999401472)
 # SLMU v2.0 Guide
 ## Sanctifying Learning & Moral Understanding
 

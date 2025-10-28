@@ -1,3 +1,7 @@
+
+---
+
+Original architecture/design credit: TechnoShaman (Discord ID: 191470268999401472)
 # System Integration: spaCy Features Data Flow
 
 ## Overview

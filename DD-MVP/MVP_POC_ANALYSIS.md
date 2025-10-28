@@ -1,3 +1,7 @@
+
+---
+
+Original architecture/design credit: TechnoShaman (Discord ID: 191470268999401472)
 # MVP as Proof of Concept - Comprehensive Analysis
 **Digital Daemon v7.1 MVP vs. Full Architecture**
 

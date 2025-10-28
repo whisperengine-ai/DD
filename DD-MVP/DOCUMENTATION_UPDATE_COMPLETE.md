@@ -1,3 +1,7 @@
+
+---
+
+Original architecture/design credit: TechnoShaman (Discord ID: 191470268999401472)
 # Documentation Update & Demo - Completion Summary
 
 **Date:** 2025-10-27  

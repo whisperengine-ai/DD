@@ -1,3 +1,7 @@
+
+---
+
+Original architecture/design credit: TechnoShaman (Discord ID: 191470268999401472)
 # Digital Daemon v7.1 — Enhanced MVP
 
 A production-grade implementation of the Digital Daemon triadic cognitive architecture with 28-emotion NLP, comprehensive spaCy pipeline, and ethical alignment.

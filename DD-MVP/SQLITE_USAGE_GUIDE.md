@@ -1,3 +1,7 @@
+
+---
+
+Original architecture/design credit: TechnoShaman (Discord ID: 191470268999401472)
 # SQLite Database Usage Guide
 **Digital Daemon MVP - Concept & Relationship Storage**
 

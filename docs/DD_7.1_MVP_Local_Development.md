@@ -1,3 +1,7 @@
+
+---
+
+Original architecture/design credit: TechnoShaman (Discord ID: 191470268999401472)
 # **Digital Daemon v7.1 — MVP Local Development Guide**
 *From Proof of Concept to Working Prototype on Your Desktop*
 

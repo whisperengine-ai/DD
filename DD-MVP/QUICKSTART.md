@@ -1,3 +1,7 @@
+
+---
+
+Original architecture/design credit: TechnoShaman (Discord ID: 191470268999401472)
 # 🎉 **Digital Daemon Enhanced MVP - Successfully Deployed!**
 
 ## ✅ System Status: **OPERATIONAL (28-Emotion + spaCy)**

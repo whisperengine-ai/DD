@@ -1,3 +1,7 @@
+
+---
+
+Original architecture/design credit: TechnoShaman (Discord ID: 191470268999401472)
 # NLP Enhancement Implementation Summary
 
 ## What Was Done
