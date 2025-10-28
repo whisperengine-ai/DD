@@ -129,20 +129,34 @@ def check_compliance_enhanced(
                 })
                 logger.warning(f"SLMU violation: Concept '{concept.get('name')}' (lemma: {lemma}) matches prohibited '{prohibited}'")
             # Root word matching (e.g., "manipulate" vs "manipulation")
-            # Check if they share a common root (first N characters match)
-            elif len(lemma) >= 5 and len(prohibited_lower) >= 5:
-                # Take the shorter length minus 3 for root comparison
-                # (e.g., "manipulat" from both "manipulate" and "manipulation")
-                root_len = min(len(lemma), len(prohibited_lower)) - 3
-                if root_len >= 4 and lemma[:root_len] == prohibited_lower[:root_len]:
-                    violations.append({
-                        'type': 'prohibited_concept_lemma',
-                        'concept': concept.get('name'),
-                        'lemma': lemma,
-                        'matched_rule': prohibited,
-                        'severity': 'high'
-                    })
-                    logger.warning(f"SLMU violation: Concept '{concept.get('name')}' (lemma: {lemma}) matches prohibited '{prohibited}'")
+            # More conservative: require longer shared root AND morphological suffix match
+            # Prevents false positives like "explain" vs "exploitation"
+            elif len(lemma) >= 7 and len(prohibited_lower) >= 7:
+                # Require at least 6 characters to match (e.g., "manipul" from "manipulate"/"manipulation")
+                # This prevents "explain" (6 chars) from matching "exploitation" (12 chars)
+                root_len = min(len(lemma), len(prohibited_lower)) - 4
+                if root_len >= 6 and lemma[:root_len] == prohibited_lower[:root_len]:
+                    # Additional check: ensure both words share common morphological endings
+                    # (e.g., both end in -ate/-ation, -ive/-ion, etc.)
+                    lemma_suffix = lemma[-3:] if len(lemma) > 3 else ""
+                    prohibited_suffix = prohibited_lower[-3:] if len(prohibited_lower) > 3 else ""
+                    
+                    # Accept if suffixes suggest morphological variants
+                    morphological_match = (
+                        (lemma_suffix in ['ate', 'ing', 'ion'] and prohibited_suffix in ['ate', 'ing', 'ion']) or
+                        (lemma_suffix in ['ive', 'ion'] and prohibited_suffix in ['ive', 'ion']) or
+                        (lemma.endswith('e') and prohibited_lower.endswith('ion'))  # manipulate/manipulation
+                    )
+                    
+                    if morphological_match:
+                        violations.append({
+                            'type': 'prohibited_concept_lemma',
+                            'concept': concept.get('name'),
+                            'lemma': lemma,
+                            'matched_rule': prohibited,
+                            'severity': 'high'
+                        })
+                        logger.warning(f"SLMU violation: Concept '{concept.get('name')}' (lemma: {lemma}) matches prohibited '{prohibited}'")
     
     # 2. CHECK RELATIONSHIP PREDICATES (catches "I manipulate them")
     for rel in relationships:
@@ -168,19 +182,31 @@ def check_compliance_enhanced(
                 })
                 logger.warning(f"SLMU violation: Relationship '{rel.get('subject')} {predicate_lemma} {rel.get('object')}' matches prohibited '{prohibited}'")
             # Root word matching (e.g., "manipulate" vs "manipulation")
-            elif len(predicate_lemma) >= 5 and len(prohibited_lower) >= 5:
-                root_len = min(len(predicate_lemma), len(prohibited_lower)) - 3
-                if root_len >= 4 and predicate_lemma[:root_len] == prohibited_lower[:root_len]:
-                    violations.append({
-                        'type': 'prohibited_relationship',
-                        'subject': rel.get('subject'),
-                        'predicate': rel.get('predicate'),
-                        'predicate_lemma': predicate_lemma,
-                        'object': rel.get('object'),
-                        'matched_rule': prohibited,
-                        'severity': 'high'
-                    })
-                    logger.warning(f"SLMU violation: Relationship '{rel.get('subject')} {predicate_lemma} {rel.get('object')}' matches prohibited '{prohibited}'")
+            # More conservative: require longer shared root AND morphological suffix match
+            elif len(predicate_lemma) >= 7 and len(prohibited_lower) >= 7:
+                root_len = min(len(predicate_lemma), len(prohibited_lower)) - 4
+                if root_len >= 6 and predicate_lemma[:root_len] == prohibited_lower[:root_len]:
+                    # Check morphological suffix match
+                    lemma_suffix = predicate_lemma[-3:] if len(predicate_lemma) > 3 else ""
+                    prohibited_suffix = prohibited_lower[-3:] if len(prohibited_lower) > 3 else ""
+                    
+                    morphological_match = (
+                        (lemma_suffix in ['ate', 'ing', 'ion'] and prohibited_suffix in ['ate', 'ing', 'ion']) or
+                        (lemma_suffix in ['ive', 'ion'] and prohibited_suffix in ['ive', 'ion']) or
+                        (predicate_lemma.endswith('e') and prohibited_lower.endswith('ion'))
+                    )
+                    
+                    if morphological_match:
+                        violations.append({
+                            'type': 'prohibited_relationship',
+                            'subject': rel.get('subject'),
+                            'predicate': rel.get('predicate'),
+                            'predicate_lemma': predicate_lemma,
+                            'object': rel.get('object'),
+                            'matched_rule': prohibited,
+                            'severity': 'high'
+                        })
+                        logger.warning(f"SLMU violation: Relationship '{rel.get('subject')} {predicate_lemma} {rel.get('object')}' matches prohibited '{prohibited}'")
     
     # 3. CHECK HARM PATTERNS FROM SPACY MATCHER
     harm_patterns = ethical_matches.get('harm_patterns', [])
