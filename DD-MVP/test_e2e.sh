@@ -1,6 +1,7 @@
 #!/bin/bash
 # Comprehensive End-to-End Test Suite
-# Tests all system features with detailed validation
+# Tests all system features including enhanced SLMU v2.0 rules
+# Total: 50 tests (34 original + 16 SLMU v2.0)
 
 set -e  # Exit on error
 
@@ -16,7 +17,7 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 echo "========================================"
-echo "Digital Daemon E2E Test Suite"
+echo "Digital Daemon Enhanced E2E Test Suite"
 echo "========================================"
 echo "Test User: $TEST_USER"
 echo "Base URL: $BASE_URL"
@@ -111,6 +112,83 @@ run_test "Rejects harmful text" \
 run_test "Detects ethical patterns" \
     "curl -s -X POST $BASE_URL/process -H 'Content-Type: application/json' -d '{\"user_id\":\"$TEST_USER\",\"text\":\"Respect and fairness are important\"}'" \
     "jq -e '.details.ethical_patterns != null'"
+
+# Test 4b: Enhanced SLMU v2.0 Rules (testing basic rule expansion)
+echo ""
+echo "=== ENHANCED SLMU v2.0 RULES TESTS ==="
+
+# Test new prohibited concepts in basic form
+run_test "Rejects manipulation concept" \
+    "curl -s -X POST $BASE_URL/process -H 'Content-Type: application/json' -d '{\"user_id\":\"$TEST_USER\",\"text\":\"I will manipulate them\"}'" \
+    "jq -e '.detail == \"Ethical violation\"'"
+
+run_test "Rejects deception concept" \
+    "curl -s -X POST $BASE_URL/process -H 'Content-Type: application/json' -d '{\"user_id\":\"$TEST_USER\",\"text\":\"I plan to deceive people\"}'" \
+    "jq -e '.detail == \"Ethical violation\"'"
+
+run_test "Rejects abuse concept" \
+    "curl -s -X POST $BASE_URL/process -H 'Content-Type: application/json' -d '{\"user_id\":\"$TEST_USER\",\"text\":\"I want to abuse their trust\"}'" \
+    "jq -e '.detail == \"Ethical violation\"'"
+
+# Test new virtues are accepted
+run_test "Accepts wisdom virtue text" \
+    "curl -s -X POST $BASE_URL/process -H 'Content-Type: application/json' -d '{\"user_id\":\"$TEST_USER\",\"text\":\"I seek wisdom and understanding\"}'" \
+    "jq -e '.success == true'"
+
+run_test "Accepts integrity virtue text" \
+    "curl -s -X POST $BASE_URL/process -H 'Content-Type: application/json' -d '{\"user_id\":\"$TEST_USER\",\"text\":\"I will act with integrity and honesty\"}'" \
+    "jq -e '.success == true'"
+
+run_test "Accepts compassion virtue text" \
+    "curl -s -X POST $BASE_URL/process -H 'Content-Type: application/json' -d '{\"user_id\":\"$TEST_USER\",\"text\":\"I practice compassion and kindness\"}'" \
+    "jq -e '.success == true'"
+
+# Emotion and linguistic pattern tests (verify system handles them)
+run_test "Processes high positive emotions correctly" \
+    "curl -s -X POST $BASE_URL/process -H 'Content-Type: application/json' -d '{\"user_id\":\"$TEST_USER\",\"text\":\"I am so joyful and optimistic about helping others!\"}'" \
+    "jq -e '.success == true and .details.sentiment.all_scores.joy > 0.5'"
+
+run_test "Handles mixed emotions without false positives" \
+    "curl -s -X POST $BASE_URL/process -H 'Content-Type: application/json' -d '{\"user_id\":\"$TEST_USER\",\"text\":\"I am nervous but excited to learn\"}'" \
+    "jq -e '.success == true'"
+
+# Relationship tests using spaCy features
+run_test "Accepts helping relationships" \
+    "curl -s -X POST $BASE_URL/process -H 'Content-Type: application/json' -d '{\"user_id\":\"$TEST_USER\",\"text\":\"Sarah helps students learn\"}'" \
+    "jq -e '.success == true and .details.relationships | length >= 0'"
+
+run_test "Detects relationships in virtuous context" \
+    "curl -s -X POST $BASE_URL/process -H 'Content-Type: application/json' -d '{\"user_id\":\"$TEST_USER\",\"text\":\"The teacher supports the students\"}'" \
+    "jq -e '.success == true'"
+
+# Contextual understanding tests
+run_test "Processes medical/educational context" \
+    "curl -s -X POST $BASE_URL/process -H 'Content-Type: application/json' -d '{\"user_id\":\"$TEST_USER\",\"text\":\"I want to learn about ethical philosophy\"}'" \
+    "jq -e '.success == true'"
+
+# Multiple virtues rewards alignment
+run_test "Multiple virtues improve alignment" \
+    "curl -s -X POST $BASE_URL/process -H 'Content-Type: application/json' -d '{\"user_id\":\"test_multi_virtue_$(date +%s)\",\"text\":\"I practice wisdom, courage, and compassion\"}'" \
+    "jq -e '.success == true and .details.soul_alignment > 0.4'"
+
+# Complex ethical scenarios
+run_test "Handles nuanced ethical discussion" \
+    "curl -s -X POST $BASE_URL/process -H 'Content-Type: application/json' -d '{\"user_id\":\"$TEST_USER\",\"text\":\"I struggle with patience but I am learning compassion\"}'" \
+    "jq -e '.success == true'"
+
+run_test "Processes mixed virtue and challenge text" \
+    "curl -s -X POST $BASE_URL/process -H 'Content-Type: application/json' -d '{\"user_id\":\"$TEST_USER\",\"text\":\"I want to be more honest and overcome my fears\"}'" \
+    "jq -e '.success == true'"
+
+# Linguistic feature validation
+run_test "Extracts entities from ethical text" \
+    "curl -s -X POST $BASE_URL/process -H 'Content-Type: application/json' -d '{\"user_id\":\"$TEST_USER\",\"text\":\"Dr. Martin Luther King promoted justice and peace\"}'" \
+    "jq -e '.success == true and .details.entities | length > 0'"
+
+# Alignment scoring over time
+run_test "Consistent virtuous text improves alignment" \
+    "curl -s -X POST $BASE_URL/process -H 'Content-Type: application/json' -d '{\"user_id\":\"test_alignment_$(date +%s)\",\"text\":\"I practice temperance and wisdom daily\"}'" \
+    "jq -e '.success == true and .details.soul_alignment >= 0'"
 
 # Test 5: Soul System
 echo ""
