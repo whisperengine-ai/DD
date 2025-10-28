@@ -1,8 +1,8 @@
-# 🎉 **Digital Daemon MVP - Successfully Deployed!**
+# 🎉 **Digital Daemon Enhanced MVP - Successfully Deployed!**
 
-## ✅ System Status: **OPERATIONAL**
+## ✅ System Status: **OPERATIONAL (28-Emotion + spaCy)**
 
-Your Digital Daemon v7.1 MVP is now running on Docker!
+Your Digital Daemon v7.1 Enhanced MVP is now running with production-grade NLP!
 
 ---
 
@@ -10,14 +10,15 @@ Your Digital Daemon v7.1 MVP is now running on Docker!
 
 | Component | Status | Description |
 |:--|:--:|:--|
-| **Chroma Triad** | ✅ | Perceptive/Emotional processing (Heart) |
-| **Prismo Triad** | ✅ | Cognitive/Moral reasoning (Mind) |
+| **Chroma Enhanced** | ✅ | 28-emotion detection + 384D embeddings + ChromaDB |
+| **Prismo Enhanced** | ✅ | Full spaCy NLP (9 features) + ethical reasoning |
 | **Anchor Triad** | ✅ | Embodied/Behavioral tracking (Body) |
-| **Corpus Callosum** | ✅ | Fusion hub with ethical gating |
-| **Soul System** | ✅ | Persistent user state |
-| **SLMU Engine** | ✅ | Ethical compliance checking |
+| **Corpus Callosum** | ✅ | Fusion hub with dual-format SLMU compliance |
+| **Soul System** | ✅ | Vector-based alignment tracking |
+| **SLMU Engine** | ✅ | Multi-feature ethical validation |
 | **Sleep Phase** | ✅ | Auto-maintenance (every 6 hours) |
 | **REST API** | ✅ | FastAPI on port 8000 |
+| **ML Models** | ✅ | Cardiff RoBERTa (28 emotions) + spaCy + sentence-transformers |
 
 ---
 
@@ -29,10 +30,15 @@ Your Digital Daemon v7.1 MVP is now running on Docker!
 # Health check
 curl http://localhost:8000/health
 
-# Process input
+# Process with emotion detection
 curl -X POST http://localhost:8000/process \
   -H "Content-Type: application/json" \
-  -d '{"text": "I seek wisdom and understanding", "user_id": "mark"}'
+  -d '{"text": "I am excited and optimistic about learning!", "user_id": "mark"}'
+
+# Test mixed emotions
+curl -X POST http://localhost:8000/process \
+  -H "Content-Type: application/json" \
+  -d '{"text": "I love this but I am also nervous about it", "user_id": "mark"}'
 
 # Check soul state
 curl http://localhost:8000/soul/mark
@@ -41,11 +47,22 @@ curl http://localhost:8000/soul/mark
 open http://localhost:8000/docs
 ```
 
-### Run Demo
+### Run Demos and Tests
 
 ```bash
 cd /Users/markcastillo/git/DD/DD-MVP
-./demo.sh
+
+# Interactive feature demo
+./demo_interactive.sh
+
+# Run all 34 E2E tests
+./test_e2e.sh
+
+# Performance benchmark
+docker exec dd-mvp python benchmark.py
+
+# Test spaCy pipeline
+./test_spacy_pipeline.sh
 ```
 
 ### View Logs
@@ -72,6 +89,42 @@ docker-compose restart
 
 # Rebuild (after code changes)
 docker-compose up --build -d
+```
+
+---
+
+## 🧠 **New Features Available**
+
+### 28-Emotion Detection
+Your inputs are now analyzed across 28 emotions including:
+- joy, optimism, love, admiration, gratitude
+- anger, sadness, fear, disgust, disappointment
+- surprise, confusion, curiosity, anticipation
+- And 14 more nuanced emotions!
+
+### spaCy NLP Pipeline
+Every input gets deep linguistic analysis:
+- Named Entity Recognition (people, places, organizations)
+- Part-of-Speech tagging
+- Dependency parsing
+- Lemmatization (root word extraction)
+- Sentence boundary detection
+- Relationship extraction
+
+### Mixed Emotions
+The system now handles complex emotional states:
+```json
+{
+  "sentiment": {
+    "label": "optimism",
+    "all_scores": {
+      "optimism": 0.87,
+      "joy": 0.73,
+      "fear": 0.45,
+      "nervousness": 0.32
+    }
+  }
+}
 ```
 
 ---

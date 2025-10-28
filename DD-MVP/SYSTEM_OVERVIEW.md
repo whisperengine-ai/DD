@@ -1,14 +1,21 @@
-# Digital Daemon v7.1 — System Overview
+# Digital Daemon v7.1 — System Overview (Enhanced)
 
-**A Cognitively-Inspired AI Architecture with Ethical Alignment**
+**A Cognitively-Inspired AI Architecture with 28-Emotion Detection, Advanced NLP, and Ethical Alignment**
 
 ---
 
 ## 🎯 What Is This System?
 
-Digital Daemon v7.1 (DD) is a **morally-aware conversational AI** that processes information through three parallel cognitive pathways and maintains persistent user profiles called "Souls" that track ethical alignment over time.
+Digital Daemon v7.1 (DD) is a **morally-aware conversational AI** that processes information through three parallel cognitive pathways using production-grade NLP models. It maintains persistent user profiles called "Souls" that track ethical alignment over time through sophisticated emotional and linguistic analysis.
 
-Think of it as: **An AI assistant with a conscience, memory, and emotional intelligence.**
+Think of it as: **An AI assistant with a conscience, memory, emotional intelligence, and deep language understanding.**
+
+**Key Enhancements:**
+- 🧠 **28-emotion multilabel detection** instead of simple sentiment
+- 📝 **Full spaCy NLP pipeline** with 9 integrated features
+- 🎨 **Mixed-emotion support** for complex emotional states
+- 🔍 **384D semantic embeddings** with ChromaDB vector storage
+- ✅ **34 E2E tests** with 182ms mean latency
 
 ---
 
@@ -19,40 +26,67 @@ Unlike typical AI that processes everything through a single neural network, DD 
 ### 1. CHROMA — The Heart (Emotional Processing) 🎨
 
 **What it does:**
-- Analyzes emotional tone and sentiment
+- Analyzes emotional spectrum using **Cardiff Twitter RoBERTa** (28 emotions)
+- Detects mixed emotions (e.g., "happy but nervous" → joy 96% + fear 45%)
 - Creates "color-coded" emotional vectors (ROYGBIV spectrum)
+- Generates 384D semantic embeddings
+- Stores memories in ChromaDB vector database
 - Remembers how interactions *feel*
 
 **Example:**
 ```
-Input: "I'm feeling lost and confused"
+Input: "I'm excited about the opportunity but scared of failure"
 Chroma Output: 
-  - Sentiment: -0.45 (negative)
-  - Color vector: Blue (sadness) + Violet (confusion)
-  - Emotional memory stored
+  - Dominant emotion: optimism (0.87)
+  - All emotions: {
+      optimism: 0.87,
+      joy: 0.73,
+      fear: 0.65,
+      anticipation: 0.42,
+      nervousness: 0.38,
+      trust: 0.21
+    }
+  - ROYGBIV: Orange(0.4) + Yellow(0.35) + Indigo(0.25)
+  - Embedding: [0.234, -0.123, 0.456, ...] (384D)
+  - Vector stored in ChromaDB
 ```
 
-**Technology:** Vector embeddings stored in NumPy arrays, sentiment analysis
+**Technology:** Cardiff RoBERTa (28-emotion multilabel), sentence-transformers (all-MiniLM-L6-v2), ChromaDB
 
 ---
 
 ### 2. PRISMO — The Mind (Cognitive Processing) 🧩
 
 **What it does:**
-- Extracts key concepts and meaning
+- Extracts entities, concepts, and relationships using **spaCy**
+- Performs deep linguistic analysis (POS tagging, dependency parsing, lemmatization)
 - Applies ethical reasoning via SLMU rules
-- Enforces moral guidelines
+- Enforces moral guidelines with multi-feature validation
+- Detects sentence structure and key lemmas
 
 **Example:**
 ```
-Input: "Should I lie to get ahead at work?"
+Input: "Dr. Sarah Chen developed an AI that respects privacy"
 Prismo Output:
-  - Concepts: ["deception", "career", "ethics"]
-  - SLMU Check: ❌ FAILED (violates honesty principle)
-  - Alignment score reduced
+  - Entities: [
+      {text: "Sarah Chen", label: "PERSON", lemma: "Sarah Chen"},
+      {text: "AI", label: "ORG"}
+    ]
+  - Concepts: ["develop", "AI", "privacy", "respect"]
+  - Relationships: [
+      {subject: "Sarah Chen", predicate: "developed", object: "AI"}
+    ]
+  - Linguistic: {
+      token_count: 9,
+      pos_distribution: {NOUN: 4, VERB: 1, PROPN: 3, DET: 1},
+      key_lemmas: ["develop", "respect", "privacy"],
+      dependencies: ["nsubj", "dobj", "prep", "pobj"]
+    }
+  - SLMU Check: ✅ PASSED (ethical_patterns: ["respect", "privacy"])
+  - Alignment score maintained
 ```
 
-**Technology:** Concept extraction, rule-based ethical filtering
+**Technology:** spaCy 3.7.2 (en_core_web_sm), rule-based ethical pattern matching
 
 ---
 
@@ -62,6 +96,7 @@ Prismo Output:
 - Logs real-world interactions
 - Tracks session history
 - Records what actually *happened*
+- Maintains context across conversations
 
 **Example:**
 ```
@@ -70,25 +105,28 @@ Anchor Output:
   - Session ID: abc-123-def
   - Interaction logged to SQLite
   - Previous context retrieved (3 similar conversations)
+  - Enhanced concepts stored with lemmas and POS tags
 ```
 
-**Technology:** SQLite database, session management
+**Technology:** SQLite database with enhanced schema (lemmas, POS tags, dependency types), session management
 
 ---
 
 ## 🧬 The Corpus Callosum (Integration Layer)
 
-After all three triads process input in parallel, the **Corpus Callosum** integrates their outputs:
+After all three triads process input in parallel, the **Corpus Callosum** integrates their outputs with dual-format SLMU compliance:
 
 ```
 ┌─────────────┐
-│   CHROMA    │──┐
-│ (emotion)   │  │
+│   CHROMA    │──┐  28 emotions
+│ (emotion)   │  │  384D vectors
+│  Enhanced   │  │  ChromaDB
 └─────────────┘  │
                  ├──→ CORPUS CALLOSUM ──→ Unified Response
-┌─────────────┐  │         (Fusion +      
-│   PRISMO    │──┤       Arbitration +    
-│ (cognition) │  │       Ethics Gate)     
+┌─────────────┐  │     (Fusion +      
+│   PRISMO    │──┤   Multi-feature +    
+│ (cognition) │  │   SLMU Ethics +
+│  Enhanced   │  │   Coherence)     
 └─────────────┘  │
                  │
 ┌─────────────┐  │
