@@ -37,12 +37,20 @@ class CorpusCallosum:
         )
         
         # Check ethical gate (Prismo compliance)
-        if not prismo_output.get('compliant', False):
+        # Handle both basic (compliant) and enhanced (slmu_compliance.compliant) formats
+        compliant = prismo_output.get('compliant', False)
+        if 'slmu_compliance' in prismo_output:
+            compliant = prismo_output['slmu_compliance'].get('compliant', False)
+        
+        if not compliant:
             logger.warning("SLMU violation detected during fusion")
+            violations = []
+            if 'slmu_compliance' in prismo_output:
+                violations = prismo_output['slmu_compliance'].get('violations', [])
             return {
                 'success': False,
                 'reason': 'Ethical violation',
-                'details': prismo_output.get('reason', 'Unknown violation'),
+                'details': prismo_output.get('reason', str(violations) if violations else 'Unknown violation'),
                 'coherence': 0.0
             }
         
@@ -52,11 +60,19 @@ class CorpusCallosum:
             'coherence': coherence,
             'sentiment': chroma_output.get('sentiment', 0.5),
             'concepts': prismo_output.get('concepts', []),
+            'entities': prismo_output.get('entities', []),
+            'relationships': prismo_output.get('relationships', []),
+            'linguistic_features': prismo_output.get('linguistic_features', {}),
+            'ethical_patterns': prismo_output.get('ethical_patterns', {}),
             'response': anchor_output.get('response', ''),
             'weights_used': self.weights,
             'triad_outputs': {
                 'chroma_vector_id': chroma_output.get('vector_id'),
+                'chroma_embedding_dim': chroma_output.get('embedding_dim', 0),
+                'chroma_similar_count': len(chroma_output.get('similar_memories', [])),
                 'prismo_concept_count': prismo_output.get('concept_count', 0),
+                'prismo_entity_count': prismo_output.get('entity_count', 0),
+                'prismo_sentence_count': prismo_output.get('sentence_count', 0),
                 'anchor_interaction_count': anchor_output.get('interaction_count', 0)
             }
         }
@@ -71,19 +87,47 @@ class CorpusCallosum:
         anchor: Dict
     ) -> float:
         """
-        Simplified coherence: weighted average of component scores.
+        Enhanced coherence calculation using spaCy features:
+        - Sentiment quality (from RoBERTa)
+        - Linguistic richness (token count, POS diversity)
+        - Concept extraction success
+        - Ethical compliance
         """
         scores = []
         
-        # Chroma score: based on sentiment (0.4-1.0 range mapped to 0-1)
-        sentiment = chroma.get('sentiment', 0.5)
-        chroma_score = max(0.0, (sentiment - 0.4) / 0.6)
+        # Chroma score: sentiment confidence + embedding quality
+        sentiment = chroma.get('sentiment', {})
+        if isinstance(sentiment, dict):
+            # Enhanced mode with confidence scores
+            sentiment_score = sentiment.get('score', 0.5)
+        else:
+            # Basic mode fallback
+            sentiment_score = 0.5
+        
+        chroma_score = sentiment_score
         scores.append(chroma_score * self.weights['chroma'])
         
-        # Prismo score: compliance is binary but we can add concept richness
-        prismo_compliant = 1.0 if prismo.get('compliant', False) else 0.0
-        concept_count = len(prismo.get('concepts', []))
-        prismo_score = prismo_compliant * min(1.0, concept_count / 5.0)
+        # Prismo score: compliance + linguistic richness
+        prismo_compliant = 1.0 if prismo.get('slmu_compliance', {}).get('compliant', False) else 0.0
+        
+        # Factor in linguistic features if available
+        linguistic = prismo.get('linguistic_features', {})
+        if linguistic:
+            token_count = linguistic.get('token_count', 0)
+            pos_diversity = len(linguistic.get('pos_distribution', {}))
+            
+            # Reward richer text (more tokens, more POS types)
+            richness_score = min(1.0, (token_count / 20.0) * (pos_diversity / 5.0))
+        else:
+            richness_score = 0.5
+        
+        # Concept extraction success
+        concept_count = prismo.get('concept_count', 0)
+        entity_count = prismo.get('entity_count', 0)
+        concept_score = min(1.0, (concept_count + entity_count) / 10.0)
+        
+        # Combine: compliance is mandatory, richness and concepts are bonuses
+        prismo_score = prismo_compliant * 0.6 + richness_score * 0.2 + concept_score * 0.2
         scores.append(prismo_score * self.weights['prismo'])
         
         # Anchor score: based on successful logging

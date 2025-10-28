@@ -7,13 +7,28 @@ import numpy as np
 import logging
 import uuid
 import sys
+import os
 from pathlib import Path
 
 # Add src to path for imports
 sys.path.insert(0, str(Path(__file__).parent))
 
-from triads.chroma import ChromaTriad
-from triads.prismo import PrismoTriad
+# Try to import enhanced triads, fall back to basic if not available
+USE_ENHANCED = os.getenv("DD_USE_ENHANCED", "true").lower() == "true"
+
+try:
+    if USE_ENHANCED:
+        from triads.chroma_enhanced import ChromaTriadEnhanced as ChromaTriad
+        from triads.prismo_enhanced import PrismoTriadEnhanced as PrismoTriad
+        logger = logging.getLogger(__name__)
+        logger.info("Using ENHANCED triads with spaCy and RoBERTa")
+except ImportError as e:
+    logger = logging.getLogger(__name__)
+    logger.warning(f"Enhanced triads not available ({e}), falling back to basic")
+    from triads.chroma import ChromaTriad
+    from triads.prismo import PrismoTriad
+    USE_ENHANCED = False
+
 from triads.anchor import AnchorTriad
 from callosum import CorpusCallosum
 from soul import Soul
@@ -79,12 +94,18 @@ async def startup_event():
         logger.info("Initializing vector store...")
         vector_store = SimpleVectorStore("data/vectors.npz")
         
-        # Initialize triads
+        # Initialize triads (with different constructors for enhanced vs basic)
         logger.info("Initializing Chroma triad...")
-        chroma = ChromaTriad(vector_store)
+        if USE_ENHANCED:
+            chroma = ChromaTriad(chroma_persist_dir="data/chromadb")
+        else:
+            chroma = ChromaTriad(vector_store)
         
         logger.info("Initializing Prismo triad...")
-        prismo = PrismoTriad("data/dd.db", slmu_rules)
+        if USE_ENHANCED:
+            prismo = PrismoTriad(db_path="data/dd.db", slmu_rules_path="config/slmu_rules.json")
+        else:
+            prismo = PrismoTriad("data/dd.db", slmu_rules)
         
         logger.info("Initializing Anchor triad...")
         anchor = AnchorTriad("data/interactions.jsonl")
@@ -102,7 +123,7 @@ async def startup_event():
         sleep_phase.start(interval_hours=6)
         
         logger.info("="*60)
-        logger.info("Digital Daemon MVP Ready!")
+        logger.info(f"Digital Daemon MVP Ready! (Enhanced mode: {USE_ENHANCED})")
         logger.info("="*60)
         
     except Exception as e:
@@ -185,11 +206,16 @@ async def process_input(req: ProcessRequest):
             coherence=fused['coherence'],
             response=fused['response'],
             details={
-                'sentiment': chroma_out['sentiment'],
+                'sentiment': chroma_out.get('sentiment'),
                 'concepts': prismo_out.get('concepts', []),
+                'entities': prismo_out.get('entities', []),
+                'relationships': prismo_out.get('relationships', []),
+                'linguistic_features': prismo_out.get('linguistic_features', {}),
+                'ethical_patterns': prismo_out.get('ethical_patterns', {}),
+                'slmu_compliance': prismo_out.get('slmu_compliance', {}),
                 'soul_alignment': updated_soul['alignment_score'],
                 'session_id': session_id,
-                'similar_memories': len(chroma_out.get('similar_memories', [])),
+                'similar_memories': chroma_out.get('similar_memories', []),
                 'triad_outputs': fused.get('triad_outputs', {})
             }
         )
