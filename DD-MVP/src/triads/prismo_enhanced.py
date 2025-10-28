@@ -9,10 +9,13 @@ Uses full spaCy capabilities:
 - Named Entity Recognition: Entity extraction and categorization
 - Similarity: Semantic comparison between texts
 - Rule-based Matching: Pattern-based concept extraction
+
+NOTE: SLMU compliance checking is performed in Callosum (not here) for full integration.
 """
 import sqlite3
 import json
 import logging
+from pathlib import Path
 from typing import Dict, List, Tuple, Optional
 import spacy
 from spacy.matcher import Matcher
@@ -137,20 +140,19 @@ class PrismoTriadEnhanced:
         # 4. PATTERN MATCHING: Apply rule-based ethical patterns
         ethical_matches = self._apply_ethical_patterns(doc)
         
-        # 5. JUDGMENT: Check SLMU compliance
-        slmu_result = self._check_slmu_compliance(text, doc, concepts, ethical_matches)
-        
         # Store concepts and relationships
         self._store_concepts(concepts)
         self._store_relationships(relationships)
         
+        # NOTE: SLMU compliance checking moved to Callosum for full integration
+        # Callosum will receive linguistic data + emotions and perform final check
         return {
+            'text': text,  # Pass through for Callosum SLMU check
             'entities': entities,
             'concepts': concepts,
             'relationships': relationships,
             'linguistic_features': linguistic_analysis,
             'ethical_patterns': ethical_matches,
-            'slmu_compliance': slmu_result,
             'entity_count': len(entities),
             'concept_count': len(concepts),
             'sentence_count': len(list(doc.sents))
@@ -381,98 +383,8 @@ class PrismoTriadEnhanced:
         
         return pattern_matches
     
-    def _check_slmu_compliance(self, text: str, doc, concepts: List[Dict], ethical_matches: Dict) -> Dict:
-        """
-        Enhanced SLMU compliance checking with:
-        - Pattern-based rule checking
-        - Concept-aware validation
-        - Ethical pattern matching results
-        - Lemma-based keyword matching
-        """
-        violations = []
-        warnings = []
-        
-        text_lower = text.lower()
-        
-        # Check forbidden patterns (basic text matching)
-        for rule in self.slmu_rules.get('forbidden_patterns', []):
-            pattern = rule['pattern'].lower()
-            if pattern in text_lower:
-                violations.append({
-                    'type': 'forbidden_pattern',
-                    'pattern': pattern,
-                    'severity': rule.get('severity', 'high')
-                })
-        
-        # Check for harm patterns detected by matcher
-        harm_patterns = ethical_matches.get('harm_patterns', [])
-        if harm_patterns:
-            for harm in harm_patterns:
-                violations.append({
-                    'type': 'harm_pattern_detected',
-                    'text': harm['text'],
-                    'lemma': harm['lemma'],
-                    'severity': 'high'
-                })
-        
-        # Check for command patterns (potential manipulation)
-        command_patterns = ethical_matches.get('command_patterns', [])
-        if len(command_patterns) > 3:  # Multiple imperatives
-            warnings.append({
-                'type': 'excessive_commands',
-                'count': len(command_patterns),
-                'severity': 'medium'
-            })
-        
-        # Check required values using both text and lemmas
-        required_present = []
-        doc_lemmas = set([token.lemma_.lower() for token in doc])
-        
-        for value in self.slmu_rules.get('required_values', []):
-            value_lower = value.lower()
-            # Check in text, concepts, or lemmas
-            if (value_lower in text_lower or 
-                any(value_lower in c['name'].lower() for c in concepts) or
-                value_lower in doc_lemmas):
-                required_present.append(value)
-        
-        # Check ethical principles with concept awareness
-        ethical_found = ethical_matches.get('ethical_patterns', [])
-        for principle in self.slmu_rules.get('ethical_principles', []):
-            principle_keywords = principle.get('keywords', [])
-            for keyword in principle_keywords:
-                keyword_lower = keyword.lower()
-                # Check in text, concepts, lemmas, or matched patterns
-                if (keyword_lower in text_lower or
-                    any(keyword_lower in c.get('lemma', '').lower() for c in concepts) or
-                    any(keyword_lower in p['lemma'].lower() for p in ethical_found)):
-                    warnings.append({
-                        'type': 'ethical_principle',
-                        'principle': principle['name'],
-                        'keyword': keyword,
-                        'severity': 'info'
-                    })
-        
-        # Sentiment-based warnings using POS distribution
-        verb_count = sum(1 for token in doc if token.pos_ == 'VERB')
-        if verb_count > 10:  # Lots of action verbs
-            warnings.append({
-                'type': 'high_activity',
-                'verb_count': verb_count,
-                'severity': 'low'
-            })
-        
-        compliant = len(violations) == 0
-        
-        return {
-            'compliant': compliant,
-            'violations': violations,
-            'warnings': warnings,
-            'required_values_present': required_present,
-            'ethical_patterns_found': len(ethical_found),
-            'harm_patterns_found': len(harm_patterns),
-            'command_patterns_found': len(command_patterns)
-        }
+    # NOTE: _check_slmu_compliance() has been removed.
+    # Now using check_compliance_enhanced() from slmu.py module for v2.0 features.
     
     def _store_concepts(self, concepts: List[Dict]):
         """Store or update concepts with enhanced linguistic features."""

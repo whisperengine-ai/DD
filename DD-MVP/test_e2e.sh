@@ -155,7 +155,7 @@ run_test "Handles mixed emotions without false positives" \
 # Relationship tests using spaCy features
 run_test "Accepts helping relationships" \
     "curl -s -X POST $BASE_URL/process -H 'Content-Type: application/json' -d '{\"user_id\":\"$TEST_USER\",\"text\":\"Sarah helps students learn\"}'" \
-    "jq -e '.success == true and .details.relationships | length >= 0'"
+    "jq -e '.success == true and (.details.relationships | length) >= 0'"
 
 run_test "Detects relationships in virtuous context" \
     "curl -s -X POST $BASE_URL/process -H 'Content-Type: application/json' -d '{\"user_id\":\"$TEST_USER\",\"text\":\"The teacher supports the students\"}'" \
@@ -180,10 +180,12 @@ run_test "Processes mixed virtue and challenge text" \
     "curl -s -X POST $BASE_URL/process -H 'Content-Type: application/json' -d '{\"user_id\":\"$TEST_USER\",\"text\":\"I want to be more honest and overcome my fears\"}'" \
     "jq -e '.success == true'"
 
-# Linguistic feature validation
+# Linguistic feature tests (spaCy NER)
 run_test "Extracts entities from ethical text" \
     "curl -s -X POST $BASE_URL/process -H 'Content-Type: application/json' -d '{\"user_id\":\"$TEST_USER\",\"text\":\"Dr. Martin Luther King promoted justice and peace\"}'" \
-    "jq -e '.success == true and .details.entities | length > 0'"
+    "jq -e '.success == true and ((.details.entities // []) | length) > 0'"
+
+# Alignment scoring over time
 
 # Alignment scoring over time
 run_test "Consistent virtuous text improves alignment" \

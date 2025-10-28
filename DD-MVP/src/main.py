@@ -212,7 +212,7 @@ async def process_input(req: ProcessRequest):
                 'relationships': prismo_out.get('relationships', []),
                 'linguistic_features': prismo_out.get('linguistic_features', {}),
                 'ethical_patterns': prismo_out.get('ethical_patterns', {}),
-                'slmu_compliance': prismo_out.get('slmu_compliance', {}),
+                'slmu_compliance': fused.get('slmu_compliance', {}),  # Now from Callosum, not Prismo
                 'soul_alignment': updated_soul['alignment_score'],
                 'session_id': session_id,
                 'similar_memories': chroma_out.get('similar_memories', []),

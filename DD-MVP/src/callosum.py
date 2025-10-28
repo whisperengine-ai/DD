@@ -1,24 +1,36 @@
 """
 Corpus Callosum: Fusion and arbitration layer.
 Combines outputs from all three triads with ethical gating.
+Performs final SLMU v2.0 compliance check with full context (linguistic + emotional data).
 """
 import numpy as np
+import sys
+from pathlib import Path
 from typing import Dict
 import logging
+
+# Import SLMU v2.0
+sys.path.insert(0, str(Path(__file__).parent))
+from slmu import check_compliance_enhanced, load_slmu_rules
 
 logger = logging.getLogger(__name__)
 
 
 class CorpusCallosum:
-    """Simplified fusion and arbitration."""
+    """Simplified fusion and arbitration with SLMU v2.0 gating."""
     
-    def __init__(self, weights: Dict[str, float] = None):
+    def __init__(self, weights: Dict[str, float] = None, slmu_rules_path: str = "config/slmu_rules.json"):
         self.weights = weights or {
             'chroma': 0.33,
             'prismo': 0.34,
             'anchor': 0.33
         }
+        
+        # Load SLMU rules for ethical gating
+        self.slmu_rules = load_slmu_rules(slmu_rules_path)
+        
         logger.info(f"Callosum initialized with weights: {self.weights}")
+        logger.info(f"SLMU rules v{self.slmu_rules.get('version', 'unknown')} loaded for ethical gating")
     
     def fuse(
         self,
@@ -27,32 +39,43 @@ class CorpusCallosum:
         anchor_output: Dict
     ) -> Dict:
         """
-        Simple fusion: weighted combination of outputs.
-        """
-        logger.debug("Starting fusion process")
+        Enhanced fusion with integrated SLMU v2.0 ethical gating.
         
-        # Calculate coherence (simplified)
-        coherence = self._calculate_coherence(
-            chroma_output, prismo_output, anchor_output
+        Performs final compliance check using:
+        - Prismo's linguistic analysis (concepts, relationships, patterns)
+        - Chroma's emotional intelligence (28-emotion scores)
+        - Combined context for v2.0 emotion validation
+        """
+        logger.debug("Starting fusion process with SLMU v2.0 gating")
+        
+        # SLMU v2.0: Final ethical check with full context
+        slmu_result = check_compliance_enhanced(
+            text=prismo_output.get('text', ''),
+            concepts=prismo_output.get('concepts', []),
+            relationships=prismo_output.get('relationships', []),
+            ethical_matches=prismo_output.get('ethical_patterns', {}),
+            emotions=chroma_output.get('sentiment', None),  # 28-emotion scores from Chroma
+            rules=self.slmu_rules
         )
         
-        # Check ethical gate (Prismo compliance)
-        # Handle both basic (compliant) and enhanced (slmu_compliance.compliant) formats
-        compliant = prismo_output.get('compliant', False)
-        if 'slmu_compliance' in prismo_output:
-            compliant = prismo_output['slmu_compliance'].get('compliant', False)
-        
-        if not compliant:
-            logger.warning("SLMU violation detected during fusion")
-            violations = []
-            if 'slmu_compliance' in prismo_output:
-                violations = prismo_output['slmu_compliance'].get('violations', [])
+        # Ethical gate: Reject if violations found
+        if not slmu_result.get('compliant', False):
+            violations = slmu_result.get('violations', [])
+            logger.warning(f"SLMU v2.0 violation detected during fusion: {len(violations)} violation(s)")
             return {
                 'success': False,
                 'reason': 'Ethical violation',
-                'details': prismo_output.get('reason', str(violations) if violations else 'Unknown violation'),
+                'details': {
+                    'violations': violations,
+                    'warnings': slmu_result.get('warnings', [])
+                },
                 'coherence': 0.0
             }
+        
+        # Calculate coherence using all triad outputs
+        coherence = self._calculate_coherence(
+            chroma_output, prismo_output, anchor_output
+        )
         
         # Simple fusion: combine sentiment + compliance + action
         fused_response = {
@@ -64,6 +87,7 @@ class CorpusCallosum:
             'relationships': prismo_output.get('relationships', []),
             'linguistic_features': prismo_output.get('linguistic_features', {}),
             'ethical_patterns': prismo_output.get('ethical_patterns', {}),
+            'slmu_compliance': slmu_result,  # Full SLMU v2.0 result with emotion validation
             'response': anchor_output.get('response', ''),
             'weights_used': self.weights,
             'triad_outputs': {
@@ -91,7 +115,9 @@ class CorpusCallosum:
         - Sentiment quality (from RoBERTa)
         - Linguistic richness (token count, POS diversity)
         - Concept extraction success
-        - Ethical compliance
+        
+        NOTE: SLMU compliance is checked in fuse() before this is called,
+        so by the time we calculate coherence, we know input is ethically compliant.
         """
         scores = []
         
@@ -107,10 +133,8 @@ class CorpusCallosum:
         chroma_score = sentiment_score
         scores.append(chroma_score * self.weights['chroma'])
         
-        # Prismo score: compliance + linguistic richness
-        prismo_compliant = 1.0 if prismo.get('slmu_compliance', {}).get('compliant', False) else 0.0
-        
-        # Factor in linguistic features if available
+        # Prismo score: linguistic richness + concept extraction
+        # (compliance already verified in fuse())
         linguistic = prismo.get('linguistic_features', {})
         if linguistic:
             token_count = linguistic.get('token_count', 0)
@@ -126,8 +150,8 @@ class CorpusCallosum:
         entity_count = prismo.get('entity_count', 0)
         concept_score = min(1.0, (concept_count + entity_count) / 10.0)
         
-        # Combine: compliance is mandatory, richness and concepts are bonuses
-        prismo_score = prismo_compliant * 0.6 + richness_score * 0.2 + concept_score * 0.2
+        # Combine richness and concepts (compliance already guaranteed)
+        prismo_score = richness_score * 0.5 + concept_score * 0.5
         scores.append(prismo_score * self.weights['prismo'])
         
         # Anchor score: based on successful logging
